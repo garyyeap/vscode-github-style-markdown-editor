@@ -8,3 +8,6 @@ src/**
 design/**
 tsconfig.json
 vsc-extension-quickstart.md
+node_modules/**
+esbuild.mjs
+docs/**

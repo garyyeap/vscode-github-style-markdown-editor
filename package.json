@@ -1,9 +1,9 @@
 {
-  "name": "github-markdown-preview",
+  "name": "github-style-markdown-editor",
   "private": true,
   "version": "0.4.0",
-  "displayName": "GitHub Markdown Preview",
-  "description": "Changes VS Code's built-in markdown preview to match GitHub",
+  "displayName": "GitHub Style Markdown Editor",
+  "description": "A GitHub style WYSIWYG markdown editor for VS Code",
   "keywords": [
     "markdown",
     "style",
@@ -12,25 +12,184 @@
     "gfm"
   ],
   "icon": "logo/logox128.png",
-  "publisher": "bierner",
+  "publisher": "garyyeap",
+  "author": "Gary Yeap",
   "license": "MIT",
   "repository": {
-    "url": "https://github.com/mjbvz/vscode-github-markdown-preview.git"
+    "type": "git",
+    "url": "https://github.com/garyyeap/vscode-github-style-markdown-editor.git"
   },
   "bugs": {
-    "url": "https://github.com/mjbvz/vscode-github-markdown-preview/issues"
+    "url": "https://github.com/garyyeap/vscode-github-style-markdown-editor/issues"
   },
   "engines": {
     "vscode": "^1.122.0"
   },
   "categories": [
-    "Other",
-    "Extension Packs"
+    "Other"
   ],
-  "extensionPack": [
-    "bierner.markdown-preview-github-styles",
-    "bierner.markdown-emoji",
-    "bierner.markdown-checkbox",
-    "bierner.markdown-footnotes"
-  ]
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "githubMarkdown.editor",
+        "displayName": "Editor",
+        "priority": "option",
+        "selector": [
+          {
+            "filenamePattern": "*.{md,mkd,mkdn,mdwn,mdown,markdown,markdn,mdtxt,mdtext}"
+          }
+        ]
+      }
+    ],
+    "configuration": {
+      "title": "GitHub Style Markdown Editor",
+      "properties": {
+        "githubStyleMarkdownEditor.colorTheme": {
+          "type": "string",
+          "order": 0,
+          "enum": [
+            "auto",
+            "system",
+            "light",
+            "dark"
+          ],
+          "enumItemLabels": [
+            "Auto (match editor)",
+            "System",
+            "Single theme: Light",
+            "Single theme: Dark"
+          ],
+          "enumDescriptions": [
+            "Match the VS Code color theme.",
+            "Follow the system color theme.",
+            "Always use the light theme.",
+            "Always use the dark theme."
+          ],
+          "default": "auto",
+          "description": "Color mode of the GitHub theme in the editor."
+        },
+        "githubStyleMarkdownEditor.lightTheme": {
+          "type": "string",
+          "order": 1,
+          "enum": [
+            "light",
+            "light_high_contrast",
+            "light_colorblind",
+            "light_tritanopia",
+            "dark",
+            "dark_high_contrast",
+            "dark_colorblind",
+            "dark_tritanopia",
+            "dark_dimmed"
+          ],
+          "enumItemLabels": [
+            "Light",
+            "Light high contrast",
+            "Light Protanopia & Deuteranopia",
+            "Light Tritanopia",
+            "Dark",
+            "Dark high contrast",
+            "Dark Protanopia & Deuteranopia",
+            "Dark Tritanopia",
+            "Dark dimmed"
+          ],
+          "default": "light",
+          "markdownDescription": "GitHub theme used in light mode. Ignored when `#githubStyleMarkdownEditor.colorTheme#` is `dark`."
+        },
+        "githubStyleMarkdownEditor.darkTheme": {
+          "type": "string",
+          "order": 2,
+          "enum": [
+            "light",
+            "light_high_contrast",
+            "light_colorblind",
+            "light_tritanopia",
+            "dark",
+            "dark_high_contrast",
+            "dark_colorblind",
+            "dark_tritanopia",
+            "dark_dimmed"
+          ],
+          "enumItemLabels": [
+            "Light",
+            "Light high contrast",
+            "Light Protanopia & Deuteranopia",
+            "Light Tritanopia",
+            "Dark",
+            "Dark high contrast",
+            "Dark Protanopia & Deuteranopia",
+            "Dark Tritanopia",
+            "Dark dimmed"
+          ],
+          "default": "dark",
+          "markdownDescription": "GitHub theme used in dark mode. Ignored when `#githubStyleMarkdownEditor.colorTheme#` is `light`."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "githubMarkdown.openEditor",
+        "title": "Open in GitHub Style Markdown Editor",
+        "category": "Markdown",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "githubMarkdown.openEditorReadonly",
+        "title": "Open in GitHub Style Markdown Editor (Read Only)",
+        "category": "Markdown",
+        "icon": "$(lock)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "githubMarkdown.openEditorReadonly",
+          "when": "editorLangId == markdown && !notebookEditorFocused && activeEditor == workbench.editors.files.textFileEditor",
+          "group": "navigation@-11"
+        },
+        {
+          "command": "githubMarkdown.openEditor",
+          "when": "editorLangId == markdown && !notebookEditorFocused && activeEditor == workbench.editors.files.textFileEditor",
+          "group": "navigation@-10"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "githubMarkdown.openEditor",
+          "when": "editorLangId == markdown"
+        },
+        {
+          "command": "githubMarkdown.openEditorReadonly",
+          "when": "editorLangId == markdown"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "node esbuild.mjs --production",
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/language-data": "^6.5.2",
+    "@codemirror/search": "^6.7.2",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@lezer/highlight": "^1.2.5",
+    "@milkdown/crepe": "^7.23.0",
+    "@milkdown/kit": "^7.23.0",
+    "@types/node": "^22.20.5",
+    "@types/vscode": "^1.120.0",
+    "codemirror": "^6.0.2",
+    "dompurify": "^3.4.18",
+    "esbuild": "^0.28.2",
+    "mermaid": "^12.3.0",
+    "typescript": "^7.0.2"
+  }
 }
